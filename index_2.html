@@ -1,0 +1,1676 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ระบบสต๊อกครัวบ้านก้อ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#101216; --bg-alt:#1B1E23; --panel:#1D2027; --panel-2:#262B33;
+  --border:#31363E; --text:#F5F2EA; --muted:#8C919B;
+  --copper:#E0904A; --copper-dim:#B8722F; --coral:#E8637E; --violet:#8F7FE0;
+  --teal:#45BFA0; --amber:#E3AC3E; --red:#E2543D;
+  --brand:linear-gradient(135deg,var(--copper),var(--coral));
+  --shadow-sm:0 2px 8px rgba(0,0,0,.25);
+  --shadow-md:0 8px 24px rgba(0,0,0,.35);
+  --shadow-copper:0 4px 18px rgba(224,99,110,.30);
+  --shadow-violet:0 4px 18px rgba(143,127,224,.30);
+}
+*{box-sizing:border-box;}
+body{
+  margin:0;color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;
+  background:
+    radial-gradient(1100px 500px at 15% -10%, rgba(224,144,74,.10), transparent 60%),
+    radial-gradient(900px 500px at 100% 0%, rgba(69,191,160,.06), transparent 55%),
+    var(--bg);
+}
+.wrap{max-width:1180px;margin:0 auto;padding:26px 20px 70px;}
+
+header{display:flex;justify-content:space-between;align-items:flex-end;padding-bottom:22px;}
+.eyebrow{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--copper);margin-bottom:6px;}
+h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:30px;margin:0;text-transform:uppercase;letter-spacing:.01em;}
+.date{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted);}
+
+.tabnav{display:flex;gap:4px;margin-bottom:24px;padding:5px;background:var(--panel);border:1px solid var(--border);border-radius:12px;flex-wrap:wrap;box-shadow:var(--shadow-sm);}
+.tab-btn{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;letter-spacing:.03em;background:transparent;border:none;color:var(--muted);padding:10px 18px;cursor:pointer;border-radius:8px;text-transform:uppercase;transition:background .15s ease, color .15s ease;}
+.tab-btn:hover{color:var(--text);background:var(--panel-2);}
+.tab-btn.active{color:#1A1300;background:var(--brand);box-shadow:var(--shadow-copper);}
+.tab-btn.active .n{color:#1A1300;opacity:.75;}
+.tab-btn .n{color:var(--copper);margin-right:6px;font-family:'IBM Plex Mono',monospace;}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;animation:fade .2s ease;}
+@keyframes fade{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px;}
+.stat{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:16px 18px;position:relative;overflow:hidden;box-shadow:var(--shadow-sm);transition:transform .15s ease,border-color .15s ease;}
+.stat:hover{transform:translateY(-2px);border-color:var(--copper-dim);}
+.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--copper);opacity:.7;}
+#tab-dash .stat::before{background:var(--violet);}
+#tab-dash .stat:hover{border-color:var(--violet);}
+#tab-dash .panel-title{border-bottom-color:rgba(143,127,224,.35);}
+.stat .num{font-family:'Space Grotesk',sans-serif;font-size:27px;font-weight:700;}
+.stat .lbl{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-top:5px;}
+
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:20px;box-shadow:var(--shadow-sm);}
+.panel-title{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14px;text-transform:uppercase;letter-spacing:.04em;margin:0 0 16px;padding-bottom:10px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;color:var(--text);}
+label{display:block;font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:12px 0 5px;}
+label:first-of-type{margin-top:0;}
+input,select{width:100%;padding:10px 11px;border:1px solid var(--border);border-radius:7px;background:var(--bg-alt);color:var(--text);font-family:'Inter',sans-serif;font-size:13.5px;transition:border-color .15s ease,box-shadow .15s ease;}
+input:hover,select:hover{border-color:#454B54;}
+input:focus,select:focus{outline:none;border-color:var(--copper);box-shadow:0 0 0 3px rgba(224,144,74,.18);}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.row3{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:10px;}
+.btn{font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;border:none;border-radius:8px;padding:11px 15px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:7px;transition:transform .12s ease,box-shadow .15s ease,filter .15s ease;}
+.btn svg{width:14px;height:14px;flex-shrink:0;}
+.btn-primary{background:var(--brand);color:#1A1300;width:100%;margin-top:14px;box-shadow:var(--shadow-copper);}
+.btn-primary:hover{filter:brightness(1.08);transform:translateY(-1px);}
+.btn-primary:active{transform:translateY(0) scale(.98);}
+.btn-ghost{background:var(--panel-2);color:var(--muted);border:1px solid var(--border);}
+.btn-ghost:hover{color:var(--text);border-color:var(--copper-dim);}
+.btn-cancel{background:transparent;color:var(--red);text-decoration:underline;width:100%;padding:9px 0;}
+.btn-cancel:hover{filter:brightness(1.15);}
+.btn-sm{padding:8px 11px;font-size:10.5px;margin-top:0 !important;}
+
+.grid{display:grid;grid-template-columns:320px 1fr;gap:20px;align-items:start;}
+@media (max-width:860px){.grid{grid-template-columns:1fr;}}
+.sticky{position:sticky;top:20px;}
+
+.chiprow{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;}
+
+.search-row{display:flex;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--border);border-radius:9px;padding:10px 14px;margin-bottom:14px;transition:border-color .15s ease;}
+.search-row:focus-within{border-color:var(--copper);box-shadow:0 0 0 3px rgba(224,144,74,.15);}
+.search-row svg{width:16px;height:16px;color:var(--muted);flex-shrink:0;}
+.search-row input{border:none;background:transparent;padding:0;font-size:13.5px;}
+.search-row input:focus{outline:none;box-shadow:none;}
+
+.add-cat-link{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--copper);cursor:pointer;text-decoration:underline;margin:-6px 0 12px;}
+.add-cat-link:hover{color:#F0A868;}
+
+.unit-add-row{display:none;flex-direction:column;gap:8px;margin-top:8px;padding:10px;background:var(--panel-2);border:1px solid var(--copper);border-radius:7px;}
+.unit-add-row.show{display:flex;}
+.unit-add-row .btn-row{display:flex;gap:6px;}
+.chip{font-family:'IBM Plex Mono',monospace;font-size:11px;padding:7px 13px;border:1px solid var(--border);border-radius:20px;background:var(--panel);color:var(--muted);cursor:pointer;transition:all .15s ease;}
+.chip:hover{border-color:var(--copper-dim);color:var(--text);}
+.chip.active{background:var(--brand);color:#1A1300;border-color:var(--coral);font-weight:600;box-shadow:var(--shadow-copper);}
+
+.group-block{margin-bottom:22px;}
+.group-title{display:flex;align-items:center;gap:8px;font-family:'Space Grotesk',sans-serif;font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:10px;}
+.group-title.clickable-title{cursor:pointer;user-select:none;}
+.group-title.clickable-title:hover{color:var(--text);}
+.chevron{width:15px;height:15px;margin-left:auto;transition:transform .15s ease;}
+.chevron.collapsed{transform:rotate(-90deg);}
+.dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;box-shadow:0 0 0 3px rgba(255,255,255,.05);}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:14px;}
+.card{position:relative;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:10px;box-shadow:var(--shadow-sm);transition:transform .15s ease,border-color .15s ease,box-shadow .15s ease;}
+.card:hover{border-color:var(--copper-dim);transform:translateY(-2px);box-shadow:var(--shadow-md);}
+.card-top{display:flex;gap:12px;align-items:center;cursor:pointer;}
+.qty-box{width:60px;height:60px;border-radius:12px;flex-shrink:0;border:2px solid;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:inset 0 0 0 1px rgba(255,255,255,.04);}
+.qty-box .num{font-family:'Space Grotesk',sans-serif;font-size:19px;font-weight:700;color:var(--text);line-height:1;}
+.qty-box .unit{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);margin-top:3px;max-width:52px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.card-body{flex:1;min-width:0;}
+.card-name{font-family:'Space Grotesk',sans-serif;font-size:15.5px;font-weight:600;margin:0 0 4px;line-height:1.15;}
+.card-sub{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);}
+.tag{display:inline-block;font-size:9.5px;font-family:'IBM Plex Mono',monospace;padding:3px 8px;border-radius:10px;margin-top:5px;text-transform:uppercase;letter-spacing:.04em;font-weight:600;}
+.tag.buy{background:rgba(226,84,61,.15);color:var(--red);}
+.tag.low{background:rgba(227,172,62,.15);color:var(--amber);}
+.tag.ok{background:rgba(69,191,160,.15);color:var(--teal);}
+.del{position:absolute;top:8px;right:8px;background:none;border:none;cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#5B6069;padding:4px 6px;border-radius:5px;transition:all .15s ease;}
+.del:hover{color:var(--red);background:rgba(226,84,61,.12);}
+.card-actions{display:flex;gap:8px;border-top:1px dashed var(--border);padding-top:10px;}
+.deduct-btn{font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.03em;background:var(--panel-2);border:1px solid var(--border);color:var(--muted);padding:5px 8px;border-radius:5px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:4px;transition:all .15s ease;align-self:flex-start;}
+.deduct-btn svg{width:11px;height:11px;}
+.deduct-btn:hover{border-color:var(--red);color:var(--red);background:rgba(226,84,61,.08);}
+.deduct-panel{display:none;gap:8px;align-items:center;border-top:1px dashed var(--border);padding-top:10px;}
+.deduct-panel.show{display:flex;animation:fade .15s ease;}
+.deduct-panel input{flex:1;}
+
+.quickgrid{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;}
+.qchip{font-family:'Inter',sans-serif;font-size:13px;font-weight:500;background:var(--panel-2);border:1px solid var(--border);color:var(--text);padding:9px 15px;border-radius:20px;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .15s ease;}
+.qchip:hover{border-color:var(--copper);transform:translateY(-1px);box-shadow:var(--shadow-sm);}
+.qchip .plus{color:var(--copper);font-weight:700;}
+.qchip-rm{color:var(--muted);font-size:10px;margin-left:2px;padding:2px;border-radius:50%;line-height:1;}
+.qchip-rm:hover{color:var(--red);background:rgba(226,84,61,.15);}
+.qchip-add{border-style:dashed;color:var(--muted);background:transparent;}
+.qchip-add:hover{color:var(--copper);border-color:var(--copper);border-style:dashed;}
+
+.inline-add{display:none;background:var(--panel-2);border:1px solid var(--copper);border-radius:8px;padding:14px;margin:-6px 0 18px;gap:10px;align-items:flex-end;}
+.inline-add.show{display:flex;}
+.inline-add .f{flex:1;}
+.inline-add label{margin:0 0 5px;}
+
+.buy-row{display:grid;grid-template-columns:1fr 90px 90px 34px;gap:10px;align-items:center;padding:11px 6px;border-bottom:1px solid var(--border);font-family:'IBM Plex Mono',monospace;font-size:12.5px;border-radius:6px;transition:background .15s ease;}
+.buy-row:hover{background:var(--panel-2);}
+.buy-row:last-child{border-bottom:none;}
+.buy-row .nm{font-family:'Inter',sans-serif;font-size:13.5px;font-weight:500;}
+.buy-row input{padding:7px 8px;font-size:12px;}
+.src{font-size:9px;text-transform:uppercase;padding:2px 7px;border-radius:8px;margin-left:6px;font-weight:600;}
+.src.auto{background:rgba(224,144,74,.15);color:var(--copper);}
+.src.manual{background:rgba(140,145,155,.15);color:var(--muted);}
+.src.menu{background:rgba(143,127,224,.15);color:var(--violet);}
+
+.ingredient-builder{margin:10px 0 4px;display:flex;flex-direction:column;gap:6px;}
+.ingredient-row{display:flex;justify-content:space-between;align-items:center;background:var(--panel-2);border:1px solid var(--border);border-radius:7px;padding:8px 10px;font-family:'IBM Plex Mono',monospace;font-size:12px;}
+.tpl-ing-row{display:grid;grid-template-columns:1fr 64px 92px 30px;gap:6px;align-items:center;background:var(--panel-2);border:1px solid var(--border);border-radius:7px;padding:6px 8px;margin-bottom:6px;}
+.tpl-ing-input{padding:6px 8px;font-size:12px;border-radius:5px;width:100%;}
+.tpl-lib-card{border-color:var(--violet);}
+.tpl-lib-card:hover{border-color:var(--violet);box-shadow:var(--shadow-violet);}
+
+.table-scroll{overflow-x:auto;}
+.cook-table{width:100%;border-collapse:collapse;font-family:'Inter',sans-serif;font-size:13px;}
+.cook-table thead th{text-align:left;font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);padding:8px 10px;border-bottom:2px solid var(--border);white-space:nowrap;}
+.cook-table tbody td{padding:12px 10px;border-bottom:1px solid var(--border);vertical-align:top;}
+.cook-table tbody tr:last-child td{border-bottom:none;}
+.cook-table tbody tr:hover td{background:var(--panel-2);}
+.ct-date{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted);white-space:nowrap;}
+.ct-name{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;}
+.ct-ing{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--muted);max-width:220px;}
+.ct-actions{display:flex;gap:6px;flex-wrap:wrap;}
+.ct-actions .btn{width:auto;margin:0;}
+.ingredient-row .rm{background:none;border:none;color:var(--muted);cursor:pointer;font-size:11px;padding:2px 6px;}
+.ingredient-row .rm:hover{color:var(--red);}
+
+.menu-card{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:14px;box-shadow:var(--shadow-sm);transition:transform .15s ease,border-color .15s ease;}
+.menu-card:hover{border-color:var(--violet);transform:translateY(-2px);box-shadow:var(--shadow-violet);}
+.menu-card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px;}
+.menu-date{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);margin-bottom:3px;}
+.menu-name{font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:600;margin-bottom:6px;}
+.menu-ingredients{border-top:1px dashed var(--border);border-bottom:1px dashed var(--border);padding:10px 0;margin-bottom:12px;display:flex;flex-direction:column;gap:6px;}
+.ing-row{display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--text);}
+.ing-row .ing-qty{color:var(--muted);}
+.menu-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+.menu-actions .btn{width:auto;margin:0;}
+.menu-note{font-family:'Inter',sans-serif;font-size:12.5px;color:var(--muted);font-style:italic;margin:-4px 0 12px;}
+
+.stat.clickable{cursor:pointer;}
+.stat.stat-active{border-color:var(--copper);box-shadow:var(--shadow-copper);}
+#tab-dash .stat.stat-active{border-color:var(--violet);box-shadow:var(--shadow-violet);}
+.detail-row{display:flex;justify-content:space-between;padding:9px 4px;border-bottom:1px solid var(--border);font-family:'IBM Plex Mono',monospace;font-size:12.5px;}
+.detail-row:last-child{border-bottom:none;}
+.detail-row .cat-sm{color:var(--muted);font-size:10.5px;font-family:'IBM Plex Mono',monospace;}
+
+.progress-wrap{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px 18px;margin-bottom:20px;box-shadow:var(--shadow-sm);}
+.progress-top{display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted);margin-bottom:8px;}
+.progress-bar{height:9px;background:var(--panel-2);border-radius:6px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--teal),#5FD8B8);transition:width .3s ease;border-radius:6px;}
+.shop-item{display:flex;align-items:center;gap:14px;background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:8px;cursor:pointer;box-shadow:var(--shadow-sm);transition:transform .15s ease,border-color .15s ease;}
+.shop-item:hover{transform:translateY(-1px);border-color:var(--copper-dim);}
+.shop-item.bought{opacity:.45;}
+.shop-item.bought .shop-name{text-decoration:line-through;}
+.checkbox{width:24px;height:24px;border-radius:7px;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--teal);transition:all .15s ease;}
+.shop-item.bought .checkbox{background:var(--teal);border-color:var(--teal);color:var(--bg);}
+.shop-name{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:600;flex:1;}
+.shop-qty{font-family:'IBM Plex Mono',monospace;font-size:15px;color:var(--copper);font-weight:600;}
+.finish-bar{position:sticky;bottom:14px;margin-top:20px;background:var(--panel-2);border:1px solid var(--copper);border-radius:12px;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;box-shadow:var(--shadow-md);}
+.finish-bar .btn-primary{width:auto;margin:0;padding:12px 22px;}
+
+.dash-cat-layout{display:flex;gap:28px;align-items:center;flex-wrap:wrap;}
+.clickable-row{cursor:pointer;transition:background .15s ease;border-radius:6px;}
+.clickable-row:hover{background:var(--panel-2);}
+.donut{width:150px;height:150px;border-radius:50%;margin:0;position:relative;box-shadow:var(--shadow-violet);flex-shrink:0;}
+.donut::before{content:'';position:absolute;inset:26px;border-radius:50%;background:var(--panel);}
+.donut-center{position:absolute;inset:26px;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.donut-center .n{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:700;}
+.donut-center .l{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);text-transform:uppercase;}
+.legend{display:flex;flex-direction:column;gap:9px;flex:1;min-width:180px;}
+.legend-item{display:flex;align-items:center;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:12px;}
+.legend-item .name{flex:1;font-family:'Inter',sans-serif;color:var(--text);}
+.legend-item .cnt{color:var(--muted);}
+.urgent-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);}
+.urgent-row:last-child{border-bottom:none;}
+.urgent-row .nm{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;}
+.urgent-row .cat-sm{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted);}
+.urgent-row .ratio{font-family:'IBM Plex Mono',monospace;font-size:12px;}
+.activity-item{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);font-family:'IBM Plex Mono',monospace;font-size:12px;}
+.activity-item:last-child{border-bottom:none;}
+.activity-item .icon{width:20px;text-align:center;}
+.activity-item .txt{flex:1;color:var(--text);font-family:'Inter',sans-serif;font-size:13px;}
+.activity-item .ts{color:var(--muted);font-size:10.5px;white-space:nowrap;}
+
+.empty{text-align:center;padding:44px 20px;color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:12.5px;}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--copper);color:#1A1300;font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:12px;padding:10px 18px;border-radius:20px;opacity:0;pointer-events:none;transition:opacity .25s ease, bottom .25s ease;z-index:50;}
+.toast.show{opacity:1;bottom:32px;}
+
+/* MOBILE BOTTOM NAV + TOUCH-FRIENDLY SIZING */
+.bottom-nav{display:none;}
+@media (max-width:720px){
+  .tabnav{display:none;}
+  .wrap{padding:16px 14px 96px;}
+  header{flex-direction:column;align-items:flex-start;gap:10px;}
+  .date{align-self:flex-start;}
+  h1{font-size:24px;}
+  .stats{grid-template-columns:repeat(2,1fr);gap:10px;}
+  .stat{padding:14px 16px;}
+  .stat .num{font-size:24px;}
+  .cards{grid-template-columns:1fr;}
+  .grid{grid-template-columns:1fr;}
+  .dash-cat-layout{flex-direction:column;align-items:flex-start;}
+  .row2{grid-template-columns:1fr;gap:12px;}
+  .row3{grid-template-columns:1fr;gap:12px;}
+
+  /* bigger, easier-to-tap form controls */
+  label{font-size:11px;margin:14px 0 6px;}
+  input,select{padding:13px 14px;font-size:16px;border-radius:10px;min-height:48px;}
+  .search-row{padding:12px 14px;}
+  .search-row input{min-height:auto;padding:0;}
+
+  .btn{padding:14px 18px;font-size:12.5px;min-height:48px;border-radius:10px;}
+  .btn-sm{min-height:auto;padding:10px 14px;}
+  .btn svg{width:16px;height:16px;}
+
+  .chip{padding:10px 16px;font-size:12.5px;min-height:40px;display:inline-flex;align-items:center;}
+  .qchip{padding:11px 16px;font-size:14px;min-height:44px;}
+  .add-cat-link{font-size:12px;padding:6px 0;display:block;}
+
+  .card{padding:16px;gap:12px;}
+  .qty-box{width:64px;height:64px;}
+  .card-name{font-size:16.5px;}
+  .deduct-btn{font-size:11px;padding:9px 12px;border-radius:7px;}
+  .deduct-btn svg{width:13px;height:13px;}
+  .deduct-panel input{min-height:44px;}
+  .del{padding:8px 10px;font-size:11px;}
+
+  .buy-row{grid-template-columns:1fr 76px 60px 34px;gap:8px;padding:13px 6px;}
+  .buy-row input{padding:9px 8px;font-size:13px;min-height:40px;}
+
+  .shop-item{padding:16px;gap:12px;}
+  .checkbox{width:28px;height:28px;}
+  .shop-name{font-size:16.5px;}
+  .shop-qty{font-size:15px;}
+
+  .toast{bottom:84px;font-size:12.5px;padding:11px 20px;}
+  .toast.show{bottom:96px;}
+  .finish-bar{bottom:78px;padding:14px 16px;}
+  .finish-bar span{font-size:11px;}
+  .finish-bar .btn-primary{padding:13px 18px;width:100%;}
+
+  .bottom-nav{
+    display:flex;position:fixed;left:0;right:0;bottom:0;z-index:40;
+    background:var(--panel);border-top:1px solid var(--border);
+    padding:6px 4px calc(6px + env(safe-area-inset-bottom));
+    box-shadow:0 -8px 24px rgba(0,0,0,.35);
+  }
+  .bottom-tab{
+    flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
+    background:transparent;border:none;color:var(--muted);padding:8px 2px;border-radius:10px;
+    font-family:'IBM Plex Mono',monospace;font-size:9.5px;text-transform:none;letter-spacing:0;
+    min-height:48px;justify-content:center;
+  }
+  .bottom-tab svg{width:21px;height:21px;}
+  .bottom-tab.active{color:var(--coral);background:rgba(232,99,126,.12);}
+}
+@media (max-width:380px){
+  .buy-row{grid-template-columns:1fr 64px 46px 30px;font-size:11px;}
+  .stats{grid-template-columns:repeat(2,1fr);}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div style="display:flex;align-items:center;gap:14px;">
+      <div style="width:46px;height:46px;border-radius:12px;background:var(--brand);display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-copper);flex-shrink:0;">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1A1300" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2l4 4-9 9-4-4z"/><path d="M11.5 8.5L3 17c-1 1-1 3 0 4s3 1 4 0l8.5-8.5"/></svg>
+      </div>
+      <div>
+        <div class="eyebrow">Kitchen Ops</div>
+        <h1>ระบบสต๊อกครัวบ้านก้อ</h1>
+      </div>
+    </div>
+    <div class="date" id="dateBadge"></div>
+  </header>
+
+  <div class="tabnav">
+    <button class="tab-btn active" data-tab="stock" onclick="setTab('stock')"><span class="n">01</span>คงเหลือ</button>
+    <button class="tab-btn" data-tab="buy" onclick="setTab('buy')"><span class="n">02</span>ต้องซื้อเพิ่ม</button>
+    <button class="tab-btn" data-tab="shop" onclick="setTab('shop')"><span class="n">03</span>รายการช้อปปิ้ง</button>
+    <button class="tab-btn" data-tab="dash" onclick="setTab('dash')"><span class="n">04</span>Dashboard</button>
+    <button class="tab-btn" data-tab="menu" onclick="setTab('menu')"><span class="n">05</span>เมนูที่ต้องทำ</button>
+  </div>
+
+  <nav class="bottom-nav">
+    <button class="tab-btn bottom-tab active" data-tab="stock" onclick="setTab('stock')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8L12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-5"/><path d="M12 13v8"/></svg>
+      <span>คงเหลือ</span>
+    </button>
+    <button class="tab-btn bottom-tab" data-tab="buy" onclick="setTab('buy')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2l1.5 5M18 2l-1.5 5M3.5 7h17l-1.6 11.2A2 2 0 0 1 17 20H7a2 2 0 0 1-2-1.8L3.5 7z"/></svg>
+      <span>ต้องซื้อ</span>
+    </button>
+    <button class="tab-btn bottom-tab" data-tab="shop" onclick="setTab('shop')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      <span>ช้อปปิ้ง</span>
+    </button>
+    <button class="tab-btn bottom-tab" data-tab="dash" onclick="setTab('dash')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="20" x2="4" y2="12"/><line x1="12" y1="20" x2="12" y2="6"/><line x1="20" y1="20" x2="20" y2="15"/></svg>
+      <span>Dashboard</span>
+    </button>
+    <button class="tab-btn bottom-tab" data-tab="menu" onclick="setTab('menu')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <span>เมนู</span>
+    </button>
+  </nav>
+
+  <!-- TAB 1: STOCK -->
+  <section class="tab-panel active" id="tab-stock">
+    <div class="grid">
+      <div class="panel sticky">
+        <div class="panel-title"><span id="formTitle">เพิ่มวัตถุดิบ</span></div>
+        <label>ชื่อวัตถุดิบ</label>
+        <input id="f_name" placeholder="เช่น น้ำปลา">
+        <label>หมวดหมู่</label>
+        <select id="f_cat"></select>
+        <span class="add-cat-link" onclick="showCatAdd()">+ เพิ่มหมวดหมู่ใหม่</span>
+        <div class="inline-add" id="catAddRow">
+          <div class="f"><label>ชื่อหมวดหมู่ใหม่</label><input id="newCatName" placeholder="เช่น เครื่องดื่ม"></div>
+          <button class="btn btn-primary" style="width:auto;margin:0;" onclick="confirmAddCategory()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            เพิ่ม
+          </button>
+          <button class="btn btn-ghost" onclick="cancelCatAdd()">ยกเลิก</button>
+        </div>
+        <div class="row2">
+          <div><label>คงเหลือ</label><input id="f_cur" type="number" step="1" min="0" placeholder="0"></div>
+          <div>
+            <label>หน่วย</label>
+            <select id="f_unit" onchange="handleUnitSelect(this)"></select>
+            <div class="unit-add-row" id="f_unit_addRow">
+              <input id="f_unit_new" placeholder="หน่วยใหม่ เช่น ฟอง">
+              <div class="btn-row">
+                <button class="btn btn-primary btn-sm" style="flex:1;" onclick="confirmAddUnit('f_unit')">เพิ่ม</button>
+                <button class="btn btn-ghost btn-sm" style="flex:1;" onclick="cancelAddUnit('f_unit')">ยกเลิก</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row2">
+          <div><label>จุดสั่งซื้อ (ขั้นต่ำ)</label><input id="f_min" type="number" step="1" min="0" placeholder="0"></div>
+          <div><label>เป้าหมาย (Par)</label><input id="f_par" type="number" step="1" min="0" placeholder="ไม่บังคับ"></div>
+        </div>
+        <button class="btn btn-primary" id="submitBtn" onclick="submitForm()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          เพิ่มลงสต๊อก
+        </button>
+        <button class="btn btn-cancel" id="cancelBtn" style="display:none" onclick="resetForm()">ยกเลิกการแก้ไข</button>
+      </div>
+      <div>
+        <div class="search-row">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input id="searchStock" placeholder="ค้นหาวัตถุดิบ..." oninput="onSearchStock(this.value)">
+        </div>
+        <div class="chiprow" id="catTabs"></div>
+        <div id="stockGroups"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 2: BUY -->
+  <section class="tab-panel" id="tab-buy">
+    <div class="panel" style="margin-bottom:20px;">
+      <div class="panel-title"><span>เพิ่มด่วน · เครื่องปรุงที่ใช้บ่อย</span></div>
+      <div class="quickgrid" id="quickgrid"></div>
+      <div class="inline-add" id="quickAddRow">
+        <div class="f"><label>ชื่อรายการด่วนใหม่</label><input id="qa_name" placeholder="เช่น น้ำมันหอย"></div>
+        <div class="f" style="max-width:130px;"><label>หน่วย</label><select id="qa_unit"></select></div>
+        <button class="btn btn-primary" style="width:auto;margin:0;" onclick="confirmQuickAdd()">เพิ่ม</button>
+        <button class="btn btn-ghost" onclick="cancelQuickAdd()">ยกเลิก</button>
+      </div>
+      <div class="inline-add" id="inlineAdd">
+        <div class="f"><label id="inlineLabel">จำนวนที่ต้องซื้อ</label><input id="inlineQty" type="number" step="1" min="0" placeholder="0"></div>
+        <div class="f" style="max-width:130px;">
+          <label>หน่วย</label>
+          <select id="inlineUnit" onchange="handleUnitSelect(this)"></select>
+          <div class="unit-add-row" id="inlineUnit_addRow">
+            <input id="inlineUnit_new" placeholder="หน่วยใหม่">
+            <div class="btn-row">
+              <button class="btn btn-primary btn-sm" style="flex:1;" onclick="confirmAddUnit('inlineUnit')">เพิ่ม</button>
+              <button class="btn btn-ghost btn-sm" style="flex:1;" onclick="cancelAddUnit('inlineUnit')">ยกเลิก</button>
+            </div>
+          </div>
+        </div>
+        <button class="btn btn-primary" style="width:auto;margin:0;" onclick="confirmInlineAdd()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          เพิ่ม
+        </button>
+        <button class="btn btn-ghost" onclick="cancelInlineAdd()">ยกเลิก</button>
+      </div>
+
+    <div class="panel" style="margin-bottom:20px;">
+      <div class="panel-title">
+        <span>เพิ่มรายการที่ต้องซื้อเอง</span>
+        <span class="add-cat-link" id="manualBuyToggleLink" onclick="toggleManualBuySection()">เปิด +</span>
+      </div>
+      <div id="manualBuySection" style="display:none;">
+        <label style="margin-top:0;">เลือกจากวัตถุดิบที่มีอยู่แล้ว (กดแล้วใส่จำนวน)</label>
+        <div class="quickgrid" id="stockQuickgrid"></div>
+        <div class="inline-add" id="stockInlineAdd">
+          <div class="f"><label id="stockInlineLabel">จำนวนที่ต้องซื้อ</label><input id="stockInlineQty" type="number" step="1" min="0" placeholder="0"></div>
+          <button class="btn btn-primary" style="width:auto;margin:0;" onclick="confirmStockInlineAdd()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            เพิ่ม
+          </button>
+          <button class="btn btn-ghost" onclick="cancelStockInlineAdd()">ยกเลิก</button>
+        </div>
+
+        <div class="panel-title" style="margin-top:16px;"><span>หรือพิมพ์รายการใหม่ที่ยังไม่มีในสต๊อก</span></div>
+        <div class="row3">
+          <div><label>ชื่อรายการ</label><input id="m_name" placeholder="เช่น กล่องโฟม"></div>
+          <div><label>หมวดหมู่</label>
+            <select id="m_cat"></select>
+          </div>
+          <div><label>จำนวน / หน่วย</label>
+            <div style="display:flex;gap:6px;">
+              <input id="m_qty" type="number" step="1" min="0" placeholder="0">
+              <select id="m_unit" onchange="handleUnitSelect(this)" style="flex-shrink:0;width:110px;"></select>
+            </div>
+            <div class="unit-add-row" id="m_unit_addRow">
+              <input id="m_unit_new" placeholder="หน่วยใหม่">
+              <div class="btn-row">
+                <button class="btn btn-primary btn-sm" style="flex:1;" onclick="confirmAddUnit('m_unit')">เพิ่ม</button>
+                <button class="btn btn-ghost btn-sm" style="flex:1;" onclick="cancelAddUnit('m_unit')">ยกเลิก</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="addManualBuy()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          เพิ่มลงรายการต้องซื้อ
+        </button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">
+        <span>รายการที่ต้องซื้อทั้งหมด</span>
+        <span id="buyCount" style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--copper);"></span>
+      </div>
+      <div class="search-row" style="margin-bottom:14px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input id="searchBuy" placeholder="ค้นหารายการที่ต้องซื้อ..." oninput="onSearchBuy(this.value)">
+      </div>
+      <div id="buyGroups"></div>
+    </div>
+  </section>
+
+  <!-- TAB 3: SHOP -->
+  <section class="tab-panel" id="tab-shop">
+    <div class="panel" style="margin-bottom:20px;">
+      <div class="panel-title"><span>รายการซื้อล่วงหน้า (จากตารางทำอาหาร)</span></div>
+      <div id="advanceBuyList"></div>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-top"><span id="progressLabel">0 / 0 ซื้อแล้ว</span><span>รายการช้อปปิ้งวันนี้</span></div>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    </div>
+    <div id="shopGroups"></div>
+    <div class="finish-bar">
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--muted);">ติ๊กครบแล้วกดปุ่มเพื่ออัปเดตสต๊อก</span>
+      <button class="btn btn-primary" onclick="finishShopping()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+        ซื้อเสร็จแล้ว — อัปเดตสต๊อก
+      </button>
+    </div>
+  </section>
+
+  <!-- TAB 4: DASHBOARD -->
+  <section class="tab-panel" id="tab-dash">
+    <div class="stats" id="dashStats"></div>
+    <div class="panel" id="dashDetailPanel" style="display:none;margin-bottom:20px;">
+      <div class="panel-title">
+        <span id="dashDetailTitle"></span>
+        <span class="add-cat-link" onclick="toggleDashDetail(activeDashDetail)">ปิด ✕</span>
+      </div>
+      <div id="dashDetailBody"></div>
+    </div>
+
+    <div class="panel" style="margin-bottom:16px;">
+      <div class="panel-title"><span>สัดส่วนวัตถุดิบตามหมวดหมู่</span></div>
+      <div class="dash-cat-layout">
+        <div id="donutWrap"></div>
+        <div class="legend" id="legend"></div>
+      </div>
+    </div>
+
+    <div class="panel" style="margin-bottom:16px;">
+      <div class="panel-title"><span>เมนูที่ใกล้ถึงกำหนด</span></div>
+      <div id="upcomingMenus"></div>
+    </div>
+
+    <div class="panel" style="margin-bottom:16px;">
+      <div class="panel-title">
+        <span>รายการที่ต้องซื้อทั้งหมด</span>
+        <span id="dashBuyCount" style="font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--copper);"></span>
+      </div>
+      <div id="dashBuyGroups"></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title"><span>กิจกรรมล่าสุด</span></div>
+      <div id="activityFeed"></div>
+    </div>
+  </section>
+
+  <!-- TAB 5: MENU PLANNING -->
+  <section class="tab-panel" id="tab-menu">
+    <div class="grid">
+      <div class="panel sticky">
+        <div class="panel-title">
+          <span id="menuFormTitle">เพิ่มเมนูที่ต้องทำ</span>
+          <span class="add-cat-link" id="menuFormToggleLink" onclick="toggleMenuFormSection()">ย่อ −</span>
+        </div>
+        <div id="menuFormBody">
+          <label>เลือกจากเมนูที่เคยบันทึกไว้ (ถ้ามี)</label>
+          <select id="mn_template" onchange="loadTemplateIntoForm(this.value)">
+            <option value="">-- สร้างเมนูใหม่ --</option>
+          </select>
+          <label>ชื่อเมนู</label>
+          <input id="mn_name" placeholder="เช่น ผัดกะเพราหมูสับ">
+
+          <label>วัตถุดิบที่ต้องใช้</label>
+          <div class="row3">
+            <div><input id="mn_ing_name" placeholder="ชื่อวัตถุดิบ" list="stockNameList"></div>
+            <div><input id="mn_ing_qty" type="number" step="1" min="0" placeholder="จำนวน"></div>
+            <div><select id="mn_ing_unit" onchange="handleUnitSelect(this)"></select></div>
+          </div>
+          <div class="unit-add-row" id="mn_ing_unit_addRow">
+            <input id="mn_ing_unit_new" placeholder="หน่วยใหม่">
+            <div class="btn-row">
+              <button class="btn btn-primary btn-sm" style="flex:1;" onclick="confirmAddUnit('mn_ing_unit')">เพิ่ม</button>
+              <button class="btn btn-ghost btn-sm" style="flex:1;" onclick="cancelAddUnit('mn_ing_unit')">ยกเลิก</button>
+            </div>
+          </div>
+          <button class="btn btn-ghost" style="width:100%;margin-top:8px;" onclick="addIngredientToBuilder()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            เพิ่มวัตถุดิบในรายการ
+          </button>
+          <div id="ingredientBuilderList" class="ingredient-builder"></div>
+
+          <label>หมายเหตุ</label>
+          <input id="mn_note" placeholder="รายละเอียดเพิ่มเติม (ถ้ามี)">
+
+          <button class="btn btn-primary" id="menuSubmitBtn" onclick="submitMenu()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            บันทึกเมนู
+          </button>
+          <button class="btn btn-cancel" id="menuCancelBtn" style="display:none" onclick="resetMenuForm()">ยกเลิกการแก้ไข</button>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-title"><span>ตารางทำอาหาร</span></div>
+        <div class="search-row">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input id="searchMenuInput" placeholder="ค้นหาเมนู..." oninput="onSearchMenu(this.value)">
+        </div>
+        <div class="table-scroll">
+          <table class="cook-table">
+            <thead><tr><th>วันที่</th><th>เมนู</th><th>วัตถุดิบ</th><th>สถานะ</th><th></th></tr></thead>
+            <tbody id="menuList"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" style="margin-top:20px;">
+      <div class="panel-title"><span>คลังเมนูที่เคยบันทึกไว้</span></div>
+      <div id="templateLibrary"></div>
+    </div>
+    <datalist id="stockNameList"></datalist>
+  </section>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let stock = [];
+let buys = [];
+let logs = [];
+let editId = null;
+let activeCat = 'all';
+let deductOpenId = null;
+let searchStock = '';
+let searchBuy = '';
+let menus = [];
+let menuIngredientBuilder = [];
+let editMenuId = null;
+let searchMenu = '';
+let menuTemplates = [];
+let UNITS = ['กก.','กรัม','ขวด','ถุง','ชิ้น','ลิตร','มล.','ฟอง','หัว','ต้น','ใบ','แผ่น','กล่อง','แพ็ค','มัด'];
+let CATS = ['เนื้อสัตว์/อาหารทะเล','ผัก/ผลไม้','เครื่องปรุง/ซอส','ของแห้ง/แป้ง/ข้าว','นม/ไข่','อื่นๆ'];
+const COLOR_POOL = ['#E2543D','#45BFA0','#E0904A','#C9A227','#7C9CBF','#8C7AA6','#D46FB3','#5FA8D3','#8FBF5C','#C97A9E','#D9C15A','#6FBF9A'];
+function colorForCat(cat){ const i = CATS.indexOf(cat); return COLOR_POOL[i>=0 ? i % COLOR_POOL.length : 0]; }
+let QUICK_ITEMS = [
+  {name:'รสดี', unit:'ถุง'}, {name:'น้ำตาลทราย', unit:'กก.'}, {name:'เกลือ', unit:'ถุง'},
+  {name:'น้ำปลา', unit:'ขวด'}, {name:'ซีอิ๊วขาว', unit:'ขวด'}, {name:'ซอสหอยนางรม', unit:'ขวด'},
+  {name:'น้ำส้มสายชู', unit:'ขวด'}, {name:'พริกไทยป่น', unit:'ถุง'}, {name:'ผงชูรส', unit:'ถุง'}
+];
+
+document.getElementById('dateBadge').textContent = new Date().toLocaleDateString('th-TH',{day:'2-digit',month:'short',year:'numeric'});
+
+/* ============ GOOGLE SHEETS CONFIG ============
+   1. สร้าง Google Sheet ใหม่ (เปล่าๆ ก็ได้)
+   2. เปิด Extensions > Apps Script แล้ววางโค้ด Code.gs ที่แนบมาให้
+   3. Deploy > New deployment > Web app
+      - Execute as: Me
+      - Who has access: Anyone
+   4. คัดลอก Web App URL มาแปะแทนที่ข้อความด้านล่างนี้ */
+const SHEETS_API_URL = 'https://script.google.com/macros/s/AKfycbwQCAofCpInP6_QGjTSCTscvTY15ki-FcXf2qbu6VG2EdIMPymeal7RrkyfefWe6mfv/exec';
+
+function sheetsConfigured(){ return SHEETS_API_URL && !SHEETS_API_URL.includes('PASTE_YOUR'); }
+
+async function apiGet(){
+  const res = await fetch(SHEETS_API_URL, {method:'GET'});
+  if(!res.ok) throw new Error('GET failed');
+  return res.json();
+}
+async function apiPost(action, payload){
+  const res = await fetch(SHEETS_API_URL, {
+    method:'POST',
+    headers:{'Content-Type':'text/plain;charset=utf-8'},
+    body: JSON.stringify({action, payload})
+  });
+  if(!res.ok) throw new Error('POST failed');
+  return res.json();
+}
+
+function uid(p){ return (p||'itm')+'_'+Date.now()+'_'+Math.floor(Math.random()*10000); }
+
+function showConfigBanner(){
+  const b = document.createElement('div');
+  b.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:100;background:var(--red);color:#fff;font-family:IBM Plex Mono,monospace;font-size:12.5px;padding:10px 16px;text-align:center;';
+  b.textContent = 'ยังไม่ได้ตั้งค่า SHEETS_API_URL — ข้อมูลจะไม่ถูกบันทึกลง Google Sheets จนกว่าจะแก้ค่านี้ในโค้ด (ดูคำแนะนำที่ผมส่งให้)';
+  document.body.prepend(b);
+}
+
+function parseIngredientsJSON(raw){
+  try{ return JSON.parse(raw || '[]'); }catch(e){ return []; }
+}
+function toBool(v){ return v===true || v==='TRUE' || v==='true'; }
+
+async function loadAll(){
+  if(!sheetsConfigured()){
+    showConfigBanner();
+    stock = seedStock(); buys = []; logs = []; menus = []; menuTemplates = [];
+    renderCategoryOptions(); renderUnitOptions(); syncAutoBuys(); renderAll();
+    return;
+  }
+  try{
+    const data = await apiGet();
+    CATS = (data.categories && data.categories.length) ? data.categories.map(c=>c.name) : CATS;
+    UNITS = (data.units && data.units.length) ? data.units.map(u=>u.name) : UNITS;
+    QUICK_ITEMS = (data.quickItems && data.quickItems.length) ? data.quickItems.map(q=>({name:q.name, unit:q.unit})) : QUICK_ITEMS;
+    stock = (data.stock||[]).map(s=>({...s, cur:Number(s.cur), min:Number(s.min), par: s.par===''?'':Number(s.par)}));
+    buys = (data.buys||[]).map(b=>({...b, qty:Number(b.qty), bought: toBool(b.bought)}));
+    logs = (data.logs||[]).map(l=>({...l, qty:Number(l.qty), ts:Number(l.ts)}));
+    menus = (data.menus||[]).map(m=>({
+      id:m.id, name:m.name, date:m.date, note:m.note||'',
+      addedToBuyToday: toBool(m.addedToBuyToday),
+      ingredients: parseIngredientsJSON(m.ingredientsJSON)
+    }));
+    menuTemplates = (data.menuTemplates||[]).map(t=>({
+      id:t.id, name:t.name, note:t.note||'',
+      ingredients: parseIngredientsJSON(t.ingredientsJSON)
+    }));
+    if(!stock.length){ stock = seedStock(); await saveStock(); }
+  }catch(e){
+    showToast('โหลดข้อมูลจาก Google Sheets ไม่สำเร็จ ลองรีเฟรชอีกครั้ง');
+    stock = seedStock(); buys = []; logs = []; menus = []; menuTemplates = [];
+  }
+  renderCategoryOptions();
+  renderUnitOptions();
+  syncAutoBuys();
+  renderAll();
+}
+function seedStock(){
+  return [
+    {id:uid(), name:'รสดี', cat:'เครื่องปรุง/ซอส', cur:1, unit:'ถุง', min:2, par:4},
+    {id:uid(), name:'น้ำตาลทราย', cat:'เครื่องปรุง/ซอส', cur:3, unit:'กก.', min:2, par:6},
+    {id:uid(), name:'เกลือ', cat:'เครื่องปรุง/ซอส', cur:0.5, unit:'ถุง', min:1, par:3},
+    {id:uid(), name:'น้ำปลา', cat:'เครื่องปรุง/ซอส', cur:2, unit:'ขวด', min:2, par:5},
+  ];
+}
+async function saveStock(){ if(!sheetsConfigured()) return; try{ await apiPost('saveStock', stock);}catch(e){showToast('บันทึกสต๊อกไม่สำเร็จ');} }
+async function saveBuys(){ if(!sheetsConfigured()) return; try{ await apiPost('saveBuys', buys);}catch(e){showToast('บันทึกรายการซื้อไม่สำเร็จ');} }
+async function saveLogs(){ if(!sheetsConfigured()) return; try{ await apiPost('saveLogs', logs);}catch(e){} }
+async function saveCategories(){ if(!sheetsConfigured()) return; try{ await apiPost('saveCategories', CATS.map(c=>({name:c})));}catch(e){showToast('บันทึกหมวดหมู่ไม่สำเร็จ');} }
+async function saveMenus(){
+  if(!sheetsConfigured()) return;
+  try{
+    const flat = menus.map(m=>({id:m.id, name:m.name, date:m.date, note:m.note||'', addedToBuyToday:m.addedToBuyToday, ingredientsJSON: JSON.stringify(m.ingredients||[])}));
+    await apiPost('saveMenus', flat);
+  }catch(e){showToast('บันทึกเมนูไม่สำเร็จ');}
+}
+async function saveMenuTemplates(){
+  if(!sheetsConfigured()) return;
+  try{
+    const flat = menuTemplates.map(t=>({id:t.id, name:t.name, note:t.note||'', ingredientsJSON: JSON.stringify(t.ingredients||[])}));
+    await apiPost('saveMenuTemplates', flat);
+  }catch(e){showToast('บันทึกรายการเมนูที่เคยบันทึกไม่สำเร็จ');}
+}
+async function saveUnits(){ if(!sheetsConfigured()) return; try{ await apiPost('saveUnits', UNITS.map(u=>({name:u}))); }catch(e){showToast('บันทึกหน่วยไม่สำเร็จ');} }
+async function saveQuickItems(){ if(!sheetsConfigured()) return; try{ await apiPost('saveQuickItems', QUICK_ITEMS); }catch(e){showToast('บันทึกรายการด่วนไม่สำเร็จ');} }
+
+function addLog(type, payload){
+  logs.unshift({id:uid('log'), type, ts:Date.now(), ...payload});
+  if(logs.length>60) logs = logs.slice(0,60);
+  saveLogs();
+}
+
+function status(it){ const c=Number(it.cur), m=Number(it.min); if(c<=m) return 'buy'; if(c<=m*1.3) return 'low'; return 'ok'; }
+function statusLabel(s){ return s==='buy'?'ต้องซื้อด่วน':s==='low'?'ใกล้หมด':'ปกติ'; }
+function buyQty(it){ const par = it.par!=='' && it.par!=null ? Number(it.par) : Number(it.min)*2; return Math.max(par-Number(it.cur),0); }
+function gaugeColor(s){ return s==='buy'?'var(--red)':s==='low'?'var(--amber)':'var(--teal)'; }
+function statusHex(s){ return s==='buy'?'#E2543D':s==='low'?'#E3AC3E':'#45BFA0'; }
+function groupByCat(list){ const g={}; CATS.forEach(c=>g[c]=[]); list.forEach(it=>{ (g[it.cat]=g[it.cat]||[]).push(it); }); return g; }
+
+function renderCategoryOptions(){
+  const opts = CATS.map(c=>`<option>${esc(c)}</option>`).join('');
+  ['f_cat','m_cat'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(!el) return;
+    const prev = el.value;
+    el.innerHTML = opts;
+    if(CATS.includes(prev)) el.value = prev;
+    else el.value = 'เครื่องปรุง/ซอส';
+  });
+}
+function showCatAdd(){ document.getElementById('catAddRow').classList.add('show'); document.getElementById('newCatName').focus(); }
+function cancelCatAdd(){ document.getElementById('catAddRow').classList.remove('show'); document.getElementById('newCatName').value=''; }
+async function confirmAddCategory(){
+  const name = document.getElementById('newCatName').value.trim();
+  if(!name){ showToast('ใส่ชื่อหมวดหมู่ก่อนนะ'); return; }
+  if(CATS.some(c=>c.toLowerCase()===name.toLowerCase())){ showToast('มีหมวดหมู่นี้อยู่แล้ว'); return; }
+  CATS.push(name);
+  await saveCategories();
+  renderCategoryOptions();
+  document.getElementById('f_cat').value = name;
+  cancelCatAdd();
+  renderStockGroups(); renderDashboard();
+  showToast('เพิ่มหมวดหมู่ "'+name+'" แล้ว');
+}
+
+/* ---- SHARED UNIT SELECTOR (synced across every form) ---- */
+const UNIT_FIELDS = ['f_unit','inlineUnit','m_unit','mn_ing_unit'];
+function renderUnitOptions(){
+  UNIT_FIELDS.forEach(id=>{
+    const el = document.getElementById(id);
+    if(!el) return;
+    const prev = el.value;
+    el.innerHTML = UNITS.map(u=>`<option value="${esc(u)}">${esc(u)}</option>`).join('') + `<option value="__add__">+ เพิ่มหน่วยใหม่...</option>`;
+    if(UNITS.includes(prev)) el.value = prev;
+  });
+}
+function handleUnitSelect(selectEl){
+  if(selectEl.value === '__add__'){
+    document.getElementById(selectEl.id+'_addRow').classList.add('show');
+    selectEl.value = UNITS[0] || '';
+    const newInput = document.getElementById(selectEl.id+'_new');
+    if(newInput) newInput.focus();
+  }
+}
+function cancelAddUnit(baseId){
+  document.getElementById(baseId+'_addRow').classList.remove('show');
+  document.getElementById(baseId+'_new').value = '';
+}
+async function confirmAddUnit(baseId){
+  const input = document.getElementById(baseId+'_new');
+  const name = input.value.trim();
+  if(!name){ showToast('ใส่ชื่อหน่วยก่อนนะ'); return; }
+  if(!UNITS.some(u=>u.toLowerCase()===name.toLowerCase())){
+    UNITS.push(name);
+    await saveUnits();
+  }
+  renderUnitOptions();
+  document.getElementById(baseId).value = name;
+  cancelAddUnit(baseId);
+  showToast('เพิ่มหน่วย "'+name+'" แล้ว — ใช้ได้ทุกฟอร์มทันที');
+}
+function ensureUnit(u){
+  if(u && !UNITS.some(x=>x.toLowerCase()===u.toLowerCase())){
+    UNITS.push(u); saveUnits(); renderUnitOptions();
+  }
+}
+
+function onSearchStock(v){ searchStock = v.trim().toLowerCase(); renderStockGroups(); }
+function onSearchBuy(v){ searchBuy = v.trim().toLowerCase(); renderBuyGroups(); }
+
+function setTab(t){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active', b.dataset.tab===t));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab-'+t).classList.add('active');
+  syncAutoBuys();
+  renderAll();
+}
+
+function syncAutoBuys(){
+  const stockIds = new Set(stock.map(s=>s.id));
+  buys = buys.filter(b => b.source!=='auto' || stockIds.has(b.stockId));
+  stock.forEach(it=>{
+    const s = status(it);
+    const existing = buys.find(b=>b.source==='auto' && b.stockId===it.id);
+    if(s==='ok'){
+      if(existing) buys = buys.filter(b=>b!==existing);
+    }else{
+      const qty = buyQty(it);
+      if(existing){ existing.qty = qty; existing.name=it.name; existing.cat=it.cat; existing.unit=it.unit; }
+      else buys.push({id:uid('auto'), stockId:it.id, name:it.name, cat:it.cat, qty, unit:it.unit, source:'auto', bought:false});
+    }
+  });
+  saveBuys();
+}
+
+function renderAll(){
+  renderCatTabs(); renderStockGroups();
+  renderQuickgrid(); renderStockQuickgrid(); renderBuyGroups();
+  renderShopper();
+  renderDashboard();
+  renderStockNameDatalist();
+  renderMenuList();
+}
+
+/* ---- TAB 1: STOCK ---- */
+function renderCatTabs(){
+  const cats=['all',...CATS];
+  document.getElementById('catTabs').innerHTML = cats.map(c=>`<div class="chip ${activeCat===c?'active':''}" onclick="setCat('${c.replace(/'/g,"\\'")}')">${c==='all'?'ทั้งหมด':c}</div>`).join('');
+}
+function setCat(c){ activeCat=c; renderStockGroups(); }
+let collapsedCats = new Set();
+function toggleCatCollapse(cat){
+  if(collapsedCats.has(cat)) collapsedCats.delete(cat); else collapsedCats.add(cat);
+  renderStockGroups();
+}
+function renderStockGroups(){
+  const filtered = stock.filter(i=> (activeCat==='all'||i.cat===activeCat) && (!searchStock || i.name.toLowerCase().includes(searchStock)) );
+  const el = document.getElementById('stockGroups');
+  if(!filtered.length){ el.innerHTML=`<div class="empty">${searchStock?'ไม่พบวัตถุดิบที่ค้นหา':'ยังไม่มีวัตถุดิบในหมวดนี้'}</div>`; return; }
+  const groups = groupByCat(filtered);
+  el.innerHTML = CATS.filter(c=>groups[c] && groups[c].length).map(cat=>{
+    const collapsed = collapsedCats.has(cat);
+    return `
+    <div class="group-block">
+      <div class="group-title clickable-title" onclick="toggleCatCollapse('${cat.replace(/'/g,"\\'")}')">
+        <span class="dot" style="background:${colorForCat(cat)}"></span>${cat} <span style="color:var(--border)">·</span> ${groups[cat].length} รายการ
+        <svg class="chevron ${collapsed?'collapsed':''}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      ${collapsed ? '' : `<div class="cards">${groups[cat].map(cardHtml).join('')}</div>`}
+    </div>`;
+  }).join('');
+}
+function cardHtml(it){
+  const s=status(it);
+  const hex = statusHex(s);
+  const isDeductOpen = deductOpenId === it.id;
+  return `<div class="card">
+    <button class="del" onclick="event.stopPropagation();deleteStock('${it.id}',this)">ลบ ✕</button>
+    <div class="card-top" onclick="editItem('${it.id}')">
+      <div class="qty-box" style="border-color:${hex};background:${hex}22;">
+        <div class="num">${it.cur}</div>
+        <div class="unit">${esc(it.unit||'')}</div>
+      </div>
+      <div class="card-body">
+        <div class="card-name">${esc(it.name)}</div>
+        <div class="card-sub">ขั้นต่ำ ${it.min} ${esc(it.unit||'')}</div>
+        <span class="tag ${s}">${statusLabel(s)}</span>
+      </div>
+    </div>
+    <div class="card-actions">
+      <button class="deduct-btn" onclick="event.stopPropagation();toggleDeduct('${it.id}')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        ตัดสต๊อก (ใช้ไป)
+      </button>
+    </div>
+    <div class="deduct-panel ${isDeductOpen?'show':''}" onclick="event.stopPropagation()">
+      <input type="number" step="1" min="0" id="deductQty_${it.id}" placeholder="จำนวนที่ใช้">
+      <button class="btn btn-primary btn-sm" style="margin:0;width:auto;" onclick="confirmDeduct('${it.id}')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+        ยืนยัน
+      </button>
+    </div>
+  </div>`;
+}
+function toggleDeduct(id){ deductOpenId = deductOpenId===id?null:id; renderStockGroups(); if(deductOpenId){ setTimeout(()=>{const el=document.getElementById('deductQty_'+id); if(el) el.focus();},0);} }
+async function confirmDeduct(id){
+  const el = document.getElementById('deductQty_'+id);
+  const qty = Number(el.value);
+  if(!qty || qty<=0){ showToast('ใส่จำนวนที่ใช้ไปก่อนนะ'); return; }
+  const it = stock.find(i=>i.id===id); if(!it) return;
+  it.cur = Math.max(Number(it.cur) - qty, 0);
+  addLog('deduct', {name:it.name, qty, unit:it.unit, cat:it.cat});
+  await saveStock();
+  deductOpenId = null;
+  syncAutoBuys(); renderAll();
+  showToast(`ตัดสต๊อก ${it.name} ออก ${qty} ${it.unit||''} แล้ว`);
+}
+function readForm(){
+  return {
+    name: document.getElementById('f_name').value.trim(),
+    cat: document.getElementById('f_cat').value,
+    cur: document.getElementById('f_cur').value,
+    unit: document.getElementById('f_unit').value.trim(),
+    min: document.getElementById('f_min').value,
+    par: document.getElementById('f_par').value
+  };
+}
+async function submitForm(){
+  const f = readForm();
+  if(!f.name||f.cur===''||f.min===''){ showToast('กรอกชื่อ คงเหลือ และจุดสั่งซื้อขั้นต่ำก่อนนะ'); return; }
+  if(editId){
+    const idx = stock.findIndex(i=>i.id===editId);
+    if(idx>-1) stock[idx]={...stock[idx],...f,cur:Number(f.cur),min:Number(f.min),par:f.par===''?'':Number(f.par)};
+    showToast('อัปเดตรายการแล้ว');
+  }else{
+    stock.push({id:uid(),...f,cur:Number(f.cur),min:Number(f.min),par:f.par===''?'':Number(f.par)});
+    addLog('add', {name:f.name, qty:Number(f.cur), unit:f.unit, cat:f.cat});
+    showToast('เพิ่มวัตถุดิบแล้ว');
+  }
+  await saveStock(); resetForm(); syncAutoBuys(); renderAll();
+}
+function editItem(id){
+  const it = stock.find(i=>i.id===id); if(!it) return;
+  editId=id;
+  document.getElementById('f_name').value=it.name;
+  document.getElementById('f_cat').value=it.cat;
+  document.getElementById('f_cur').value=it.cur;
+  ensureUnit(it.unit);
+  document.getElementById('f_unit').value=it.unit;
+  document.getElementById('f_min').value=it.min;
+  document.getElementById('f_par').value=it.par;
+  document.getElementById('formTitle').textContent='แก้ไข: '+it.name;
+  document.getElementById('submitBtn').textContent='✓ บันทึกการแก้ไข';
+  document.getElementById('cancelBtn').style.display='block';
+}
+function resetForm(){
+  editId=null;
+  ['f_name','f_cur','f_min','f_par'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('f_unit').value = UNITS[0] || '';
+  document.getElementById('f_cat').value='เครื่องปรุง/ซอส';
+  document.getElementById('formTitle').textContent='เพิ่มวัตถุดิบ';
+  document.getElementById('submitBtn').textContent='+ เพิ่มลงสต๊อก';
+  document.getElementById('cancelBtn').style.display='none';
+}
+let delConf={};
+async function deleteStock(id,btn){
+  if(delConf[id]){ stock=stock.filter(i=>i.id!==id); delete delConf[id]; await saveStock(); syncAutoBuys(); renderAll(); showToast('ลบรายการแล้ว'); return; }
+  delConf[id]=true; btn.textContent='ยืนยัน?'; setTimeout(()=>{delConf[id]=false; if(btn&&btn.isConnected)btn.textContent='ลบ ✕';},3000);
+}
+
+/* ---- TAB 2: BUY ---- */
+let pendingQuick = null;
+function renderQuickgrid(){
+  const chips = QUICK_ITEMS.map((s,idx)=>
+    `<div class="qchip" onclick='openInlineAdd(${JSON.stringify(s.name)}, ${JSON.stringify(s.unit)})'>
+      <span class="plus">+</span>${esc(s.name)}
+      <span class="qchip-rm" onclick="event.stopPropagation();removeQuickItem(${idx})">✕</span>
+    </div>`
+  ).join('');
+  const addChip = `<div class="qchip qchip-add" onclick="toggleQuickAddRow()"><span class="plus">+</span>เพิ่มรายการด่วน</div>`;
+  document.getElementById('quickgrid').innerHTML = chips + addChip;
+  const qaUnitEl = document.getElementById('qa_unit');
+  if(qaUnitEl) qaUnitEl.innerHTML = UNITS.map(u=>`<option value="${esc(u)}">${esc(u)}</option>`).join('');
+}
+function toggleQuickAddRow(){
+  document.getElementById('quickAddRow').classList.toggle('show');
+  document.getElementById('qa_name').focus();
+}
+function cancelQuickAdd(){
+  document.getElementById('quickAddRow').classList.remove('show');
+  document.getElementById('qa_name').value = '';
+}
+async function confirmQuickAdd(){
+  const name = document.getElementById('qa_name').value.trim();
+  const unit = document.getElementById('qa_unit').value;
+  if(!name){ showToast('ใส่ชื่อรายการก่อนนะ'); return; }
+  if(QUICK_ITEMS.some(q=>q.name.toLowerCase()===name.toLowerCase())){ showToast('มีรายการนี้อยู่แล้ว'); return; }
+  QUICK_ITEMS.push({name, unit});
+  await saveQuickItems();
+  cancelQuickAdd();
+  renderQuickgrid();
+  showToast('เพิ่ม "'+name+'" เข้ารายการด่วนแล้ว');
+}
+async function removeQuickItem(idx){
+  const item = QUICK_ITEMS[idx]; if(!item) return;
+  QUICK_ITEMS.splice(idx,1);
+  await saveQuickItems();
+  renderQuickgrid();
+  showToast('เอา "'+item.name+'" ออกจากรายการด่วนแล้ว');
+}
+function openInlineAdd(name, unit){
+  pendingQuick = {name, unit};
+  document.getElementById('inlineLabel').textContent = `จำนวน "${name}" ที่ต้องซื้อ`;
+  ensureUnit(unit);
+  document.getElementById('inlineUnit').value = unit;
+  document.getElementById('inlineQty').value = '';
+  document.getElementById('inlineAdd').classList.add('show');
+  document.getElementById('inlineQty').focus();
+}
+function cancelInlineAdd(){ pendingQuick=null; document.getElementById('inlineAdd').classList.remove('show'); }
+function findMatchingStock(name){
+  return stock.find(s=>s.name.trim().toLowerCase()===name.trim().toLowerCase());
+}
+async function confirmInlineAdd(){
+  if(!pendingQuick) return;
+  const qty = document.getElementById('inlineQty').value;
+  const unit = document.getElementById('inlineUnit').value.trim();
+  if(qty===''||Number(qty)<=0){ showToast('ใส่จำนวนก่อนนะ'); return; }
+  const match = findMatchingStock(pendingQuick.name);
+  buys.push({id:uid('man'), stockId: match?match.id:undefined, name:pendingQuick.name, cat:'เครื่องปรุง/ซอส', qty:Number(qty), unit, source:'manual', bought:false});
+  addLog('buy_add', {name:pendingQuick.name, qty:Number(qty), unit, cat:'เครื่องปรุง/ซอส'});
+  await saveBuys(); cancelInlineAdd(); renderBuyGroups(); renderShopper(); renderDashboard();
+  showToast('เพิ่ม '+pendingQuick.name+' ลงรายการซื้อแล้ว');
+}
+
+/* ---- Collapsible manual-add section + stock-based quick picker ---- */
+function toggleManualBuySection(){
+  const el = document.getElementById('manualBuySection');
+  const link = document.getElementById('manualBuyToggleLink');
+  const isOpen = el.style.display !== 'none';
+  el.style.display = isOpen ? 'none' : 'block';
+  link.textContent = isOpen ? 'เปิด +' : 'ย่อ −';
+  if(!isOpen) renderStockQuickgrid();
+}
+function renderStockQuickgrid(){
+  const el = document.getElementById('stockQuickgrid');
+  if(!el) return;
+  if(!stock.length){ el.innerHTML = `<div class="empty">ยังไม่มีวัตถุดิบในสต๊อกเลย — ไปเพิ่มที่แท็บคงเหลือก่อน</div>`; return; }
+  el.innerHTML = stock.map(s=>
+    `<div class="qchip" onclick="openStockInlineAdd('${s.id}')"><span class="plus">+</span>${esc(s.name)}</div>`
+  ).join('');
+}
+let pendingStockItem = null;
+function openStockInlineAdd(stockId){
+  const s = stock.find(x=>x.id===stockId); if(!s) return;
+  pendingStockItem = s;
+  document.getElementById('stockInlineLabel').textContent = `จำนวน "${s.name}" ที่ต้องซื้อ (${s.unit||'ไม่ระบุหน่วย'})`;
+  document.getElementById('stockInlineQty').value = '';
+  document.getElementById('stockInlineAdd').classList.add('show');
+  document.getElementById('stockInlineQty').focus();
+}
+function cancelStockInlineAdd(){ pendingStockItem=null; document.getElementById('stockInlineAdd').classList.remove('show'); }
+async function confirmStockInlineAdd(){
+  if(!pendingStockItem) return;
+  const qty = document.getElementById('stockInlineQty').value;
+  if(qty===''||Number(qty)<=0){ showToast('ใส่จำนวนก่อนนะ'); return; }
+  buys.push({id:uid('man'), stockId:pendingStockItem.id, name:pendingStockItem.name, cat:pendingStockItem.cat, qty:Number(qty), unit:pendingStockItem.unit, source:'manual', bought:false});
+  addLog('buy_add', {name:pendingStockItem.name, qty:Number(qty), unit:pendingStockItem.unit, cat:pendingStockItem.cat});
+  await saveBuys();
+  const name = pendingStockItem.name;
+  cancelStockInlineAdd();
+  renderBuyGroups(); renderShopper(); renderDashboard();
+  showToast('เพิ่ม '+name+' ลงรายการซื้อแล้ว');
+}
+async function addManualBuy(){
+  const name = document.getElementById('m_name').value.trim();
+  const cat = document.getElementById('m_cat').value;
+  const qty = document.getElementById('m_qty').value;
+  const unit = document.getElementById('m_unit').value.trim();
+  if(!name || qty===''|| Number(qty)<=0){ showToast('กรอกชื่อรายการและจำนวนก่อนนะ'); return; }
+  const match = findMatchingStock(name);
+  buys.push({id:uid('man'), stockId: match?match.id:undefined, name, cat, qty:Number(qty), unit, source:'manual', bought:false});
+  addLog('buy_add', {name, qty:Number(qty), unit, cat});
+  await saveBuys();
+  ['m_name','m_qty'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('m_unit').value = UNITS[0] || '';
+  renderBuyGroups(); renderShopper(); renderDashboard();
+  showToast('เพิ่ม '+name+' ลงรายการต้องซื้อแล้ว');
+}
+function renderBuyGroups(){
+  document.getElementById('buyCount').textContent = buys.length+' รายการ';
+  const el = document.getElementById('buyGroups');
+  const list = buys.filter(b=>!searchBuy || b.name.toLowerCase().includes(searchBuy));
+  if(!buys.length){ el.innerHTML=`<div class="empty">ยังไม่มีรายการที่ต้องซื้อ 🎉</div>`; return; }
+  if(!list.length){ el.innerHTML=`<div class="empty">ไม่พบรายการที่ค้นหา</div>`; return; }
+  const groups = groupByCat(list);
+  el.innerHTML = CATS.filter(c=>groups[c] && groups[c].length).map(cat=>`
+    <div class="group-block">
+      <div class="group-title"><span class="dot" style="background:${colorForCat(cat)}"></span>${cat}</div>
+      ${groups[cat].map(b=>`
+        <div class="buy-row">
+          <div class="nm">${esc(b.name)}<span class="src ${b.source}">${sourceLabel(b.source)}</span></div>
+          <input type="number" step="1" value="${b.qty}" onchange="updateBuyQty('${b.id}',this.value)">
+          <span>${esc(b.unit||'')}</span>
+          <button class="del" style="position:static" onclick="deleteBuy('${b.id}')">✕</button>
+        </div>`).join('')}
+    </div>`).join('');
+}
+async function updateBuyQty(id,val){ const b=buys.find(x=>x.id===id); if(b){ b.qty=Number(val)||0; await saveBuys(); renderShopper(); renderDashboard(); } }
+async function deleteBuy(id){ buys=buys.filter(b=>b.id!==id); await saveBuys(); renderBuyGroups(); renderShopper(); renderDashboard(); }
+
+/* ---- TAB 3: SHOP ---- */
+let currentShopperGroups = [];
+function renderAdvanceBuyList(){
+  const el = document.getElementById('advanceBuyList');
+  if(!el) return;
+  const list = menus.filter(m=>!m.addedToBuyToday).slice().sort((a,b)=> new Date(a.date) - new Date(b.date));
+  if(!list.length){ el.innerHTML = `<div class="empty">ยังไม่มีเมนูที่วางแผนไว้ล่วงหน้า — ไปกำหนดวันที่ได้ที่แท็บ "เมนูที่ต้องทำ"</div>`; return; }
+  el.innerHTML = list.map(m=>{
+    const days = daysUntil(m.date);
+    const urgency = menuUrgency(days);
+    const ingSummary = m.ingredients.map(ing=>`${esc(ing.name)} ${ing.qty}${esc(ing.unit||'')}`).join(', ');
+    return `
+    <div class="detail-row" style="align-items:flex-start;flex-wrap:wrap;gap:8px;position:relative;">
+      <div style="flex:1;min-width:180px;">
+        <div class="ct-name">${esc(m.name)} <span class="cat-sm">(${formatMenuDate(m.date)})</span></div>
+        <div class="ct-ing" style="margin-top:3px;">${ingSummary}</div>
+      </div>
+      <span class="tag ${urgency.cls}" style="margin-top:2px;">${urgency.label}</span>
+      <button class="btn btn-primary btn-sm" onclick="addMenuToBuyList('${m.id}')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2l1.5 5M18 2l-1.5 5M3.5 7h17l-1.6 11.2A2 2 0 0 1 17 20H7a2 2 0 0 1-2-1.8L3.5 7z"/></svg>
+        ซื้อทันที
+      </button>
+      <button class="del" style="position:static;align-self:center;" onclick="deleteMenu('${m.id}',this)">ลบ ✕</button>
+    </div>`;
+  }).join('');
+}
+function renderShopper(){
+  renderAdvanceBuyList();
+  const map = new Map();
+  buys.forEach(b=>{
+    const key = b.cat+'|'+b.name.trim().toLowerCase()+'|'+(b.unit||'').trim().toLowerCase();
+    if(!map.has(key)) map.set(key, {cat:b.cat, name:b.name, unit:b.unit, qty:0, ids:[], bought:true});
+    const g = map.get(key);
+    g.qty += Number(b.qty);
+    g.ids.push(b.id);
+    if(!b.bought) g.bought = false;
+  });
+  currentShopperGroups = Array.from(map.values());
+
+  const total = currentShopperGroups.length;
+  const done = currentShopperGroups.filter(g=>g.bought).length;
+  document.getElementById('progressLabel').textContent = `${done} / ${total} ซื้อแล้ว`;
+  document.getElementById('progressFill').style.width = total? (done/total*100)+'%':'0%';
+
+  const el = document.getElementById('shopGroups');
+  if(!currentShopperGroups.length){ el.innerHTML = `<div class="empty">ไม่มีรายการต้องไปซื้อตอนนี้ 🎉</div>`; return; }
+  const groups = groupByCat(currentShopperGroups);
+  el.innerHTML = CATS.filter(c=>groups[c] && groups[c].length).map(cat=>`
+    <div class="group-block">
+      <div class="group-title"><span class="dot" style="background:${colorForCat(cat)}"></span>${cat}</div>
+      ${groups[cat].map(g=>{
+        const idx = currentShopperGroups.indexOf(g);
+        return `
+        <div class="shop-item ${g.bought?'bought':''}" onclick="toggleShopperGroup(${idx})">
+          <div class="checkbox">${g.bought?'✓':''}</div>
+          <div class="shop-name">${esc(g.name)}</div>
+          <div class="shop-qty">${g.qty} ${esc(g.unit||'')}</div>
+        </div>`;
+      }).join('')}
+    </div>`).join('');
+}
+async function toggleShopperGroup(idx){
+  const g = currentShopperGroups[idx]; if(!g) return;
+  const newState = !g.bought;
+  buys.forEach(b=>{ if(g.ids.includes(b.id)) b.bought = newState; });
+  await saveBuys(); renderShopper();
+}
+async function toggleBought(id){ const b=buys.find(x=>x.id===id); if(b){ b.bought=!b.bought; await saveBuys(); renderShopper(); } }
+async function finishShopping(){
+  const bought = buys.filter(b=>b.bought);
+  if(!bought.length){ showToast('ยังไม่ได้ติ๊กว่าซื้ออะไรแล้วบ้างเลย'); return; }
+  let newItemCount = 0;
+  bought.forEach(b=>{
+    if(b.stockId){
+      const s = stock.find(x=>x.id===b.stockId);
+      if(s){ s.cur = Number(s.cur) + Number(b.qty); }
+    }else{
+      const already = findMatchingStock(b.name);
+      if(already){
+        already.cur = Number(already.cur) + Number(b.qty);
+      }else{
+        ensureUnit(b.unit);
+        const cat = CATS.includes(b.cat) ? b.cat : 'อื่นๆ';
+        const qty = Number(b.qty);
+        stock.push({id:uid(), name:b.name, cat, cur:qty, unit:b.unit||'', min:Math.max(Math.round(qty/2),1), par:qty});
+        newItemCount++;
+      }
+    }
+    addLog('restock', {name:b.name, qty:b.qty, unit:b.unit, cat:b.cat});
+  });
+  buys = buys.filter(b=>!b.bought);
+  await saveStock(); await saveBuys();
+  syncAutoBuys(); renderAll();
+  showToast(newItemCount ? `อัปเดตสต๊อกแล้ว (เพิ่มวัตถุดิบใหม่ ${newItemCount} รายการในหน้าคงเหลือ)` : 'อัปเดตสต๊อกเรียบร้อย ✓');
+}
+
+/* ---- TAB 4: DASHBOARD ---- */
+let activeDashDetail = null;
+function isToday(ts){ const d=new Date(ts), n=new Date(); return d.toDateString()===n.toDateString(); }
+function toggleDashDetail(key){ activeDashDetail = (activeDashDetail===key) ? null : key; renderDashboard(); }
+function goToStockItem(id){ setTab('stock'); const it = stock.find(s=>s.id===id); if(it) editItem(id); }
+function goToStockByName(name){ const s = findMatchingStock(name); setTab('stock'); if(s) editItem(s.id); }
+function goToStockCategory(cat){ setTab('stock'); setCat(cat); }
+function goToBuyTab(){ setTab('buy'); }
+function goToMenuItem(id){ setTab('menu'); editMenu(id); }
+function renderDashDetail(){
+  const panel = document.getElementById('dashDetailPanel');
+  if(!activeDashDetail){ panel.style.display='none'; return; }
+  panel.style.display='block';
+  let title = '', rows = [];
+  if(activeDashDetail==='total'){
+    title = 'วัตถุดิบทั้งหมด ('+stock.length+' รายการ)';
+    rows = stock.map(s=>`<div class="detail-row clickable-row" onclick="goToStockItem('${s.id}')"><span>${esc(s.name)} <span class="cat-sm">(${esc(s.cat)})</span></span><span>${s.cur} ${esc(s.unit||'')}</span></div>`);
+  } else if(activeDashDetail==='urgent'){
+    const list = stock.filter(s=>status(s)==='buy');
+    title = 'ต้องซื้อด่วน ('+list.length+' รายการ)';
+    rows = list.map(s=>`<div class="detail-row clickable-row" onclick="goToStockItem('${s.id}')"><span>${esc(s.name)}</span><span style="color:var(--red)">${s.cur} / ${s.min} ${esc(s.unit||'')}</span></div>`);
+  } else if(activeDashDetail==='buy'){
+    title = 'รายการรอซื้อ ('+buys.length+' รายการ)';
+    rows = buys.map(b=>`<div class="detail-row clickable-row" onclick="goToBuyTab()"><span>${esc(b.name)} <span class="cat-sm">(${esc(b.cat)})</span></span><span>${b.qty} ${esc(b.unit||'')}</span></div>`);
+  } else if(activeDashDetail==='restock'){
+    const list = logs.filter(l=>l.type==='restock' && isToday(l.ts));
+    title = 'เติมสต๊อกวันนี้ ('+list.length+' รายการ)';
+    rows = list.map(l=>`<div class="detail-row clickable-row" onclick="goToStockByName('${esc(l.name).replace(/'/g,"\\'")}')"><span>${esc(l.name)}</span><span>${l.qty} ${esc(l.unit||'')}</span></div>`);
+  }
+  document.getElementById('dashDetailTitle').textContent = title;
+  document.getElementById('dashDetailBody').innerHTML = rows.length ? rows.join('') : `<div class="empty">ไม่มีข้อมูล</div>`;
+}
+function renderUpcomingMenus(){
+  const el = document.getElementById('upcomingMenus');
+  if(!el) return;
+  const list = menus.slice().sort((a,b)=> new Date(a.date) - new Date(b.date)).slice(0,5);
+  if(!list.length){ el.innerHTML = `<div class="empty">ยังไม่มีเมนูที่วางแผนไว้ — ไปเพิ่มได้ที่แท็บเมนูที่ต้องทำ</div>`; return; }
+  el.innerHTML = list.map(m=>{
+    const days = daysUntil(m.date);
+    const urgency = menuUrgency(days);
+    return `<div class="detail-row clickable-row" onclick="goToMenuItem('${m.id}')">
+      <span>${esc(m.name)} <span class="cat-sm">(${formatMenuDate(m.date)})</span></span>
+      <span class="tag ${urgency.cls}" style="margin-top:0;">${urgency.label}</span>
+    </div>`;
+  }).join('');
+}
+function renderDashBuyList(){
+  const el = document.getElementById('dashBuyGroups');
+  const countEl = document.getElementById('dashBuyCount');
+  if(countEl) countEl.textContent = buys.length + ' รายการ';
+  if(!el) return;
+  if(!buys.length){ el.innerHTML = `<div class="empty">ไม่มีรายการที่ต้องซื้อ 🎉</div>`; return; }
+  const groups = groupByCat(buys);
+  el.innerHTML = CATS.filter(c=>groups[c] && groups[c].length).map(cat=>`
+    <div class="group-block">
+      <div class="group-title"><span class="dot" style="background:${colorForCat(cat)}"></span>${cat}</div>
+      ${groups[cat].map(b=>`
+        <div class="detail-row clickable-row" onclick="goToBuyTab()">
+          <span>${esc(b.name)}<span class="src ${b.source}" style="margin-left:6px;">${sourceLabel(b.source)}</span></span>
+          <span>${b.qty} ${esc(b.unit||'')}</span>
+        </div>`).join('')}
+    </div>`).join('');
+}
+function renderDashboard(){
+  const total = stock.length;
+  const urgent = stock.filter(i=>status(i)==='buy').length;
+  const buyTotal = buys.length;
+  const restockedToday = logs.filter(l=>l.type==='restock' && isToday(l.ts)).length;
+  document.getElementById('dashStats').innerHTML = `
+    <div class="stat clickable ${activeDashDetail==='total'?'stat-active':''}" onclick="toggleDashDetail('total')"><div class="num">${total}</div><div class="lbl">วัตถุดิบทั้งหมด</div></div>
+    <div class="stat clickable ${activeDashDetail==='urgent'?'stat-active':''}" onclick="toggleDashDetail('urgent')"><div class="num" style="color:var(--red)">${urgent}</div><div class="lbl">ต้องซื้อด่วน</div></div>
+    <div class="stat clickable ${activeDashDetail==='buy'?'stat-active':''}" onclick="toggleDashDetail('buy')"><div class="num" style="color:var(--copper)">${buyTotal}</div><div class="lbl">รายการรอซื้อ</div></div>
+    <div class="stat clickable ${activeDashDetail==='restock'?'stat-active':''}" onclick="toggleDashDetail('restock')"><div class="num" style="color:var(--teal)">${restockedToday}</div><div class="lbl">เติมสต๊อกวันนี้</div></div>`;
+  renderDashDetail();
+
+  const groups = groupByCat(stock);
+  const counts = CATS.map(c=>({cat:c, n:(groups[c]||[]).length})).filter(x=>x.n>0);
+  const grandTotal = counts.reduce((a,c)=>a+c.n,0) || 1;
+  let acc = 0;
+  const stops = counts.map(c=>{
+    const start = acc/grandTotal*100; acc += c.n; const end = acc/grandTotal*100;
+    return `${colorForCat(c.cat)} ${start}% ${end}%`;
+  }).join(', ');
+  document.getElementById('donutWrap').innerHTML = counts.length
+    ? `<div class="donut" style="background:conic-gradient(${stops})"><div class="donut-center"><div class="n">${total}</div><div class="l">รายการ</div></div></div>`
+    : `<div class="empty">ยังไม่มีข้อมูล</div>`;
+  document.getElementById('legend').innerHTML = counts.map(c=>`
+    <div class="legend-item clickable-row" onclick="goToStockCategory('${c.cat.replace(/'/g,"\\'")}')"><span class="dot" style="background:${colorForCat(c.cat)}"></span><span class="name">${c.cat}</span><span class="cnt">${c.n} รายการ</span></div>
+  `).join('');
+
+  renderUpcomingMenus();
+  renderDashBuyList();
+
+  const recent = logs.slice(0,8);
+  const ICONS = {add:'＋', deduct:'－', buy_add:'🛒', restock:'✓'};
+  const TXT = {
+    add: l=>`เพิ่ม ${esc(l.name)} เข้าสต๊อก (${l.qty} ${esc(l.unit||'')})`,
+    deduct: l=>`ตัดสต๊อก ${esc(l.name)} ออก ${l.qty} ${esc(l.unit||'')}`,
+    buy_add: l=>`เพิ่ม ${esc(l.name)} ลงรายการต้องซื้อ (${l.qty} ${esc(l.unit||'')})`,
+    restock: l=>`ซื้อ ${esc(l.name)} เข้าสต๊อกแล้ว (${l.qty} ${esc(l.unit||'')})`
+  };
+  function logClickHandler(l){
+    if(l.type==='buy_add') return "goToBuyTab()";
+    if(l.type==='add' || l.type==='deduct' || l.type==='restock') return `goToStockByName('${esc(l.name).replace(/'/g,"\\'")}')`;
+    return '';
+  }
+  document.getElementById('activityFeed').innerHTML = recent.length ? recent.map(l=>`
+    <div class="activity-item clickable-row" onclick="${logClickHandler(l)}">
+      <span class="icon">${ICONS[l.type]||'•'}</span>
+      <span class="txt">${(TXT[l.type]||(()=>l.name))(l)}</span>
+      <span class="ts">${new Date(l.ts).toLocaleString('th-TH',{hour:'2-digit',minute:'2-digit',day:'2-digit',month:'2-digit'})}</span>
+    </div>`).join('') : `<div class="empty">ยังไม่มีกิจกรรม</div>`;
+}
+
+
+function sourceLabel(src){ return src==='auto' ? 'อัตโนมัติ' : src==='menu' ? 'จากเมนู' : 'เพิ่มเอง'; }
+
+/* ---- TAB 5: MENU PLANNING ---- */
+function daysUntil(dateStr){
+  if(!dateStr) return 999;
+  const d = new Date(dateStr+'T00:00:00');
+  const t = new Date(); t.setHours(0,0,0,0);
+  return Math.round((d-t)/86400000);
+}
+function menuUrgency(days){
+  if(days < 0) return {label:'เลยกำหนดมา '+Math.abs(days)+' วัน', cls:'buy'};
+  if(days === 0) return {label:'ทำวันนี้ — ควรซื้อวัตถุดิบแล้ว', cls:'buy'};
+  if(days === 1) return {label:'ทำพรุ่งนี้ — ควรซื้อวัตถุดิบแล้ว', cls:'buy'};
+  if(days <= 3) return {label:'อีก '+days+' วัน', cls:'low'};
+  return {label:'อีก '+days+' วัน', cls:'ok'};
+}
+function formatMenuDate(dateStr){
+  if(!dateStr) return '-';
+  const d = new Date(dateStr+'T00:00:00');
+  return d.toLocaleDateString('th-TH',{weekday:'long', day:'2-digit', month:'short', year:'numeric'});
+}
+function renderStockNameDatalist(){
+  const el = document.getElementById('stockNameList');
+  if(!el) return;
+  el.innerHTML = stock.map(s=>`<option value="${esc(s.name)}">`).join('');
+}
+function addIngredientToBuilder(){
+  const name = document.getElementById('mn_ing_name').value.trim();
+  const qty = document.getElementById('mn_ing_qty').value;
+  const unit = document.getElementById('mn_ing_unit').value.trim();
+  if(!name || qty===''|| Number(qty)<=0){ showToast('กรอกชื่อวัตถุดิบและจำนวนก่อนนะ'); return; }
+  menuIngredientBuilder.push({name, qty:Number(qty), unit});
+  document.getElementById('mn_ing_name').value='';
+  document.getElementById('mn_ing_qty').value='';
+  document.getElementById('mn_ing_unit').value = UNITS[0] || '';
+  renderIngredientBuilder();
+}
+function removeIngredientFromBuilder(idx){ menuIngredientBuilder.splice(idx,1); renderIngredientBuilder(); }
+function renderIngredientBuilder(){
+  const el = document.getElementById('ingredientBuilderList');
+  if(!el) return;
+  el.innerHTML = menuIngredientBuilder.map((ing,idx)=>`
+    <div class="ingredient-row">
+      <span>${esc(ing.name)} — ${ing.qty} ${esc(ing.unit||'')}</span>
+      <button class="rm" onclick="removeIngredientFromBuilder(${idx})">ลบ</button>
+    </div>`).join('');
+}
+async function submitMenu(){
+  const name = document.getElementById('mn_name').value.trim();
+  const note = document.getElementById('mn_note').value.trim();
+  if(!name){ showToast('กรอกชื่อเมนูก่อนนะ'); return; }
+  if(!menuIngredientBuilder.length){ showToast('เพิ่มวัตถุดิบอย่างน้อย 1 อย่าง'); return; }
+  if(editMenuId){
+    const idx = menus.findIndex(m=>m.id===editMenuId);
+    if(idx>-1) menus[idx] = {...menus[idx], name, note, ingredients:[...menuIngredientBuilder]};
+    await saveMenus();
+    showToast('อัปเดตเมนูแล้ว');
+  }else{
+    showToast('บันทึกเมนูลงคลังแล้ว — ไปกำหนดวันที่ทำได้ที่คลังเมนูด้านล่าง');
+  }
+  upsertMenuTemplate(name, menuIngredientBuilder, note);
+  resetMenuForm();
+  renderMenuList();
+}
+function upsertMenuTemplate(name, ingredients, note){
+  const existing = menuTemplates.find(t=>t.name.trim().toLowerCase()===name.trim().toLowerCase());
+  if(existing){ existing.ingredients = ingredients.map(i=>({...i})); existing.note = note; }
+  else menuTemplates.push({id:uid('tpl'), name, ingredients: ingredients.map(i=>({...i})), note});
+  saveMenuTemplates();
+  renderTemplateOptions();
+}
+function renderTemplateOptions(){
+  const el = document.getElementById('mn_template');
+  if(!el) return;
+  const prev = el.value;
+  el.innerHTML = '<option value="">-- สร้างเมนูใหม่ --</option>' + menuTemplates.map(t=>`<option value="${t.id}">${esc(t.name)}</option>`).join('');
+  if(menuTemplates.some(t=>t.id===prev)) el.value = prev;
+}
+
+/* ---- TEMPLATE LIBRARY WINDOW (saved recipes you can reuse/edit/schedule/buy directly) ---- */
+function unitOptionsHtml(selected){
+  return UNITS.map(u=>`<option value="${esc(u)}" ${u===selected?'selected':''}>${esc(u)}</option>`).join('');
+}
+let expandedTemplates = new Set();
+function toggleTemplateExpand(id){
+  if(expandedTemplates.has(id)) expandedTemplates.delete(id); else expandedTemplates.add(id);
+  renderTemplateLibrary();
+}
+function renderTemplateLibrary(){
+  const el = document.getElementById('templateLibrary');
+  if(!el) return;
+  if(!menuTemplates.length){ el.innerHTML = `<div class="empty">ยังไม่มีเมนูที่เคยบันทึกไว้ — บันทึกเมนูใหม่จากฟอร์มด้านบน ระบบจะเก็บเป็นคลังให้อัตโนมัติ</div>`; return; }
+  el.innerHTML = menuTemplates.map(t=>{
+    const open = expandedTemplates.has(t.id);
+    return `
+    <div class="menu-card tpl-lib-card">
+      <div class="menu-card-top" style="margin-bottom:${open?'10px':'0'};">
+        <div class="menu-name">${esc(t.name)} <span class="cat-sm">(${t.ingredients.length} วัตถุดิบ)</span></div>
+        <div style="display:flex;gap:6px;">
+          <button class="btn btn-ghost btn-sm" onclick="toggleTemplateExpand('${t.id}')">${open ? 'ซ่อน ▲' : 'ดู/แก้ไข ▼'}</button>
+          <button class="del" style="position:static" onclick="deleteTemplate('${t.id}',this)">ลบ ✕</button>
+        </div>
+      </div>
+      ${open ? `
+      <label style="margin-top:0;">หมายเหตุ</label>
+      <input value="${esc(t.note||'')}" placeholder="รายละเอียดเพิ่มเติม" onchange="updateTemplateNote('${t.id}', this.value)">
+
+      <label>วัตถุดิบ (แก้ไขได้ตรงนี้เลย)</label>
+      <div class="ingredient-builder">
+        ${t.ingredients.map((ing,idx)=>`
+          <div class="tpl-ing-row">
+            <input class="tpl-ing-input" value="${esc(ing.name)}" onchange="updateTemplateIngredient('${t.id}',${idx},'name',this.value)">
+            <input class="tpl-ing-input" type="number" step="1" min="0" value="${ing.qty}" onchange="updateTemplateIngredient('${t.id}',${idx},'qty',this.value)">
+            <select class="tpl-ing-input" onchange="updateTemplateIngredient('${t.id}',${idx},'unit',this.value)">${unitOptionsHtml(ing.unit)}</select>
+            <button class="rm" onclick="removeTemplateIngredient('${t.id}',${idx})">ลบ</button>
+          </div>`).join('')}
+      </div>
+      <div class="row3" style="margin-top:2px;">
+        <input id="tplAddName_${t.id}" placeholder="เพิ่มวัตถุดิบ...">
+        <input id="tplAddQty_${t.id}" type="number" step="1" min="0" placeholder="จำนวน">
+        <select id="tplAddUnit_${t.id}">${unitOptionsHtml(UNITS[0])}</select>
+      </div>
+      <button class="btn btn-ghost btn-sm" style="width:100%;margin-top:8px;" onclick="addTemplateIngredient('${t.id}')">+ เพิ่มวัตถุดิบ</button>
+
+      <div class="row2" style="margin-top:14px;">
+        <div><label>วันที่จะทำ</label><input type="date" id="tplDate_${t.id}"></div>
+        <div style="display:flex;align-items:flex-end;">
+          <button class="btn btn-ghost btn-sm" style="width:100%;" onclick="scheduleTemplate('${t.id}')">📅 เพิ่มเข้าตารางทำอาหาร</button>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-sm" style="width:100%;margin-top:8px;" onclick="buyTemplateIngredients('${t.id}')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2l1.5 5M18 2l-1.5 5M3.5 7h17l-1.6 11.2A2 2 0 0 1 17 20H7a2 2 0 0 1-2-1.8L3.5 7z"/></svg>
+        เพิ่มวัตถุดิบลงรายการซื้อเลย
+      </button>` : ''}
+    </div>`;
+  }).join('');
+}
+async function updateTemplateNote(id, note){
+  const t = menuTemplates.find(x=>x.id===id); if(!t) return;
+  t.note = note.trim();
+  await saveMenuTemplates();
+  showToast('บันทึกหมายเหตุแล้ว');
+}
+async function updateTemplateIngredient(id, idx, field, value){
+  const t = menuTemplates.find(x=>x.id===id); if(!t || !t.ingredients[idx]) return;
+  if(field==='qty') t.ingredients[idx].qty = Number(value)||0;
+  else if(field==='name') t.ingredients[idx].name = value.trim();
+  else if(field==='unit') t.ingredients[idx].unit = value;
+  await saveMenuTemplates();
+  showToast('อัปเดตวัตถุดิบแล้ว');
+}
+async function removeTemplateIngredient(id, idx){
+  const t = menuTemplates.find(x=>x.id===id); if(!t) return;
+  t.ingredients.splice(idx,1);
+  await saveMenuTemplates();
+  renderTemplateLibrary();
+}
+async function addTemplateIngredient(id){
+  const t = menuTemplates.find(x=>x.id===id); if(!t) return;
+  const name = document.getElementById('tplAddName_'+id).value.trim();
+  const qty = document.getElementById('tplAddQty_'+id).value;
+  const unit = document.getElementById('tplAddUnit_'+id).value;
+  if(!name || qty===''|| Number(qty)<=0){ showToast('กรอกชื่อวัตถุดิบและจำนวนก่อนนะ'); return; }
+  t.ingredients.push({name, qty:Number(qty), unit});
+  await saveMenuTemplates();
+  renderTemplateLibrary();
+  showToast('เพิ่มวัตถุดิบแล้ว');
+}
+let delConfTpl = {};
+async function deleteTemplate(id, btn){
+  if(delConfTpl[id]){
+    menuTemplates = menuTemplates.filter(t=>t.id!==id);
+    delete delConfTpl[id];
+    await saveMenuTemplates();
+    renderTemplateLibrary(); renderTemplateOptions();
+    showToast('ลบเมนูออกจากคลังแล้ว');
+    return;
+  }
+  delConfTpl[id]=true; btn.textContent='ยืนยัน?'; setTimeout(()=>{delConfTpl[id]=false; if(btn&&btn.isConnected)btn.textContent='ลบ ✕';},3000);
+}
+async function scheduleTemplate(id){
+  const t = menuTemplates.find(x=>x.id===id); if(!t) return;
+  const dateEl = document.getElementById('tplDate_'+id);
+  const date = dateEl.value;
+  if(!date){ showToast('เลือกวันที่ก่อนนะ'); return; }
+  if(!t.ingredients.length){ showToast('เมนูนี้ยังไม่มีวัตถุดิบเลย'); return; }
+  menus.push({id:uid('menu'), name:t.name, date, note:t.note||'', ingredients: t.ingredients.map(i=>({...i})), addedToBuyToday:false});
+  await saveMenus();
+  renderMenuList(); renderDashboard();
+  dateEl.value = '';
+  showToast('เพิ่ม "'+t.name+'" เข้าแผนวันที่ '+formatMenuDate(date)+' แล้ว');
+}
+async function buyTemplateIngredients(id){
+  const t = menuTemplates.find(x=>x.id===id); if(!t) return;
+  if(!t.ingredients.length){ showToast('เมนูนี้ยังไม่มีวัตถุดิบเลย'); return; }
+  t.ingredients.forEach(ing=>{
+    const match = findMatchingStock(ing.name);
+    buys.push({id:uid('menu'), stockId: match?match.id:undefined, name:ing.name, cat: match?match.cat:'อื่นๆ', qty:Number(ing.qty), unit:ing.unit, source:'menu', bought:false});
+  });
+  addLog('buy_add', {name:'เมนู: '+t.name, qty:t.ingredients.length, unit:'รายการ', cat:'เมนู'});
+  await saveBuys();
+  syncAutoBuys();
+  renderBuyGroups(); renderShopper(); renderDashboard();
+  showToast('เพิ่มวัตถุดิบของ "'+t.name+'" ลงรายการซื้อแล้ว');
+}
+
+function loadTemplateIntoForm(templateId){
+  if(!templateId) return;
+  const t = menuTemplates.find(x=>x.id===templateId); if(!t) return;
+  expandMenuFormSection();
+  document.getElementById('mn_name').value = t.name;
+  document.getElementById('mn_note').value = t.note || '';
+  menuIngredientBuilder = t.ingredients.map(i=>({...i}));
+  renderIngredientBuilder();
+  showToast('ดึงวัตถุดิบของ "'+t.name+'" มาให้แล้ว — แก้ไขแล้วกดบันทึกได้เลย');
+}
+function toggleMenuFormSection(){
+  const el = document.getElementById('menuFormBody');
+  const link = document.getElementById('menuFormToggleLink');
+  const isOpen = el.style.display !== 'none';
+  el.style.display = isOpen ? 'none' : 'block';
+  link.textContent = isOpen ? 'ขยาย +' : 'ย่อ −';
+}
+function expandMenuFormSection(){
+  document.getElementById('menuFormBody').style.display = 'block';
+  document.getElementById('menuFormToggleLink').textContent = 'ย่อ −';
+}
+function editMenu(id){
+  const m = menus.find(x=>x.id===id); if(!m) return;
+  editMenuId = id;
+  expandMenuFormSection();
+  document.getElementById('mn_name').value = m.name;
+  document.getElementById('mn_note').value = m.note || '';
+  const tpl = menuTemplates.find(t=>t.name.trim().toLowerCase()===m.name.trim().toLowerCase());
+  document.getElementById('mn_template').value = tpl ? tpl.id : '';
+  menuIngredientBuilder = m.ingredients.map(i=>({...i}));
+  renderIngredientBuilder();
+  document.getElementById('menuFormTitle').textContent = 'แก้ไข: '+m.name;
+  document.getElementById('menuSubmitBtn').innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> บันทึกการแก้ไข';
+  document.getElementById('menuCancelBtn').style.display = 'block';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+function resetMenuForm(){
+  editMenuId = null;
+  menuIngredientBuilder = [];
+  document.getElementById('mn_name').value='';
+  document.getElementById('mn_note').value='';
+  document.getElementById('mn_template').value='';
+  ['mn_ing_name','mn_ing_qty'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('mn_ing_unit').value = UNITS[0] || '';
+  renderIngredientBuilder();
+  document.getElementById('menuFormTitle').textContent = 'เพิ่มเมนูที่ต้องทำ';
+  document.getElementById('menuSubmitBtn').innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> บันทึกเมนู';
+  document.getElementById('menuCancelBtn').style.display = 'none';
+}
+let delConfMenu = {};
+async function deleteMenu(id, btn){
+  if(delConfMenu[id]){ menus = menus.filter(m=>m.id!==id); delete delConfMenu[id]; await saveMenus(); renderMenuList(); renderShopper(); renderDashboard(); showToast('ลบเมนูแล้ว'); return; }
+  delConfMenu[id]=true; btn.textContent='ยืนยัน?'; setTimeout(()=>{delConfMenu[id]=false; if(btn&&btn.isConnected)btn.textContent='ลบ ✕';},3000);
+}
+function onSearchMenu(v){ searchMenu = v.trim().toLowerCase(); renderMenuList(); }
+async function addMenuToBuyList(id){
+  const m = menus.find(x=>x.id===id); if(!m) return;
+  m.ingredients.forEach(ing=>{
+    const match = findMatchingStock(ing.name);
+    buys.push({id:uid('menu'), stockId: match?match.id:undefined, name:ing.name, cat: match?match.cat:'อื่นๆ', qty:Number(ing.qty), unit:ing.unit, source:'menu', bought:false});
+  });
+  addLog('buy_add', {name:'เมนู: '+m.name, qty:m.ingredients.length, unit:'รายการ', cat:'เมนู'});
+  m.addedToBuyToday = true;
+  await saveMenus(); await saveBuys();
+  syncAutoBuys();
+  renderBuyGroups(); renderShopper(); renderDashboard(); renderMenuList();
+  showToast('เพิ่มวัตถุดิบของ "'+m.name+'" ลงรายการซื้อแล้ว');
+}
+async function resetMenuBuyFlag(id){
+  const m = menus.find(x=>x.id===id); if(!m) return;
+  m.addedToBuyToday = false;
+  await saveMenus();
+  renderMenuList();
+}
+function renderMenuList(){
+  renderTemplateOptions();
+  renderTemplateLibrary();
+  const el = document.getElementById('menuList');
+  if(!el) return;
+  let list = menus.filter(m=>!searchMenu || m.name.toLowerCase().includes(searchMenu));
+  list = list.slice().sort((a,b)=> new Date(a.date) - new Date(b.date));
+  if(!list.length){
+    el.innerHTML = `<tr><td colspan="5" class="empty">${searchMenu?'ไม่พบเมนูที่ค้นหา':'ยังไม่มีเมนูในตารางทำอาหาร — ไปกำหนดวันที่จากคลังเมนูด้านล่างได้เลย'}</td></tr>`;
+    return;
+  }
+  el.innerHTML = list.map(m=>{
+    const days = daysUntil(m.date);
+    const urgency = menuUrgency(days);
+    const ingSummary = m.ingredients.map(ing=>`${esc(ing.name)} ${ing.qty}${esc(ing.unit||'')}`).join(', ');
+    return `
+    <tr>
+      <td class="ct-date">${formatMenuDate(m.date)}</td>
+      <td>
+        <div class="ct-name">${esc(m.name)}</div>
+        ${m.note ? `<div class="menu-note" style="margin:2px 0 0;">📝 ${esc(m.note)}</div>` : ''}
+      </td>
+      <td class="ct-ing">${ingSummary}</td>
+      <td><span class="tag ${urgency.cls}" style="margin-top:0;">${urgency.label}</span></td>
+      <td>
+        <div class="ct-actions">
+          <button class="btn btn-ghost btn-sm" onclick="editMenu('${m.id}')">แก้ไข</button>
+          <button class="btn btn-primary btn-sm" ${m.addedToBuyToday?'disabled style="opacity:.5;cursor:default;"':''} onclick="${m.addedToBuyToday?'':"addMenuToBuyList('"+m.id+"')"}">
+            ${m.addedToBuyToday ? '✓ ซื้อแล้ว' : '🛒 ต้องซื้อ'}
+          </button>
+          <button class="del" style="position:static" onclick="deleteMenu('${m.id}',this)">ลบ ✕</button>
+        </div>
+        ${m.addedToBuyToday ? `<span class="add-cat-link" onclick="resetMenuBuyFlag('${m.id}')">เพิ่มลงรายการซื้ออีกครั้ง</span>` : ''}
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function esc(s){ return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+let toastTimer;
+function showToast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove('show'),2200); }
+
+loadAll();
+</script>
+</body>
+</html>
